@@ -14,7 +14,7 @@
       padding: 0;
       background: #fffaf0 url('https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5.jpg') center/cover fixed no-repeat;
       color: #1f2937;
-      overflow-x: hidden; /* prevents horizontal scroll */
+      overflow-x: hidden;
     }
 
     nav {
@@ -40,8 +40,8 @@
     }
 
     nav h1 img {
-      width: 70px;
-      height: 70px;
+      width: 60px;
+      height: 60px;
       margin-right: 10px;
       border-radius: 8px;
       background: #f59e0b;
@@ -182,8 +182,9 @@
 
     /* Chat widget */
     #chat-widget { position: fixed; bottom: 20px; right: 20px; width: 300px; font-family: 'Inter', sans-serif; box-shadow: 0 10px 25px rgba(0,0,0,0.2); border-radius: 10px; overflow: hidden; z-index: 9999; }
-    #chat-header { background-color: #f97316; color: white; padding: 12px 15px; font-weight: 600; cursor: pointer; text-align: center; }
-    #chat-body { background: #f9fafb; max-height: 400px; display: flex; flex-direction: column; }
+    #chat-header { background-color: #f97316; color: white; padding: 12px 15px; font-weight: 600; cursor: pointer; text-align: center; position: relative; }
+    #chat-toggle { position: absolute; right: 10px; top: 8px; background:none; border:none; color:white; font-size:1.1rem; cursor:pointer; }
+    #chat-body { background: #f9fafb; max-height: 400px; display: flex; flex-direction: column; transition: all 0.3s ease; }
     #chatbox { padding: 10px; height: 250px; overflow-y: auto; flex: 1; }
     .message { margin: 8px 0; padding: 8px 12px; border-radius: 12px; max-width: 80%; word-wrap: break-word; line-height: 1.4; }
     .user { background-color: #f97316; color: white; margin-left: auto; }
@@ -198,12 +199,7 @@
 
     /* Mobile responsiveness */
     @media (max-width: 600px) {
-      .product-grid {
-        display: flex;
-        overflow-x: auto;
-        gap: 15px;
-        padding-bottom: 10px;
-      }
+      .product-grid { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; }
       .product { flex: 0 0 auto; }
       #contacto { padding-bottom: 80px; }
       nav h1 img { width: 50px; height: 50px; }
@@ -233,30 +229,35 @@
 <section id="productos">
   <h3>Selección de productos</h3>
   <div class="product-grid">
+
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/Diseno-sin-titulo-3.png" alt="Aderezo Cilantro Mikuzka">
       <h4>Aderezo Cilantro (300ml)</h4>
       <p class="price">60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
+
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5-1.jpg" alt="Salsa Chilli-Churri">
       <h4>Salsa Chilli-Churri (300ml)</h4>
       <p class="price">60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
+
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/6-1.jpg" alt="Salsa Cremo Haba">
       <h4>Salsa Cremo Haba (300ml)</h4>
       <p class="price">60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
+
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/7.jpg" alt="Salsa Habanero">
       <h4>Salsa Habanero (300ml)</h4>
       <p class="price">60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
+
   </div>
 </section>
 
@@ -273,7 +274,10 @@
 
 <!-- Chat Widget -->
 <div id="chat-widget">
-  <div id="chat-header">💬 Soporte Mikuzka</div>
+  <div id="chat-header">
+    💬 Soporte Mikuzka
+    <button id="chat-toggle">_</button>
+  </div>
   <div id="chat-body">
     <div id="chatbox"></div>
     <form id="inputForm">
@@ -283,43 +287,58 @@
   </div>
 </div>
 
-<!-- Chat JS -->
+<!-- JS for Chat -->
 <script>
-const chatbox = document.getElementById('chatbox');
-const inputForm = document.getElementById('inputForm');
-const userInput = document.getElementById('userInput');
+  const chatbox = document.getElementById('chatbox');
+  const inputForm = document.getElementById('inputForm');
+  const userInput = document.getElementById('userInput');
 
-function appendMessage(text, sender) {
-  const msg = document.createElement('div');
-  msg.classList.add('message', sender);
-  msg.textContent = text;
-  chatbox.appendChild(msg);
-  chatbox.scrollTop = chatbox.scrollHeight;
-}
-
-inputForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const message = userInput.value.trim();
-  if (!message) return;
-
-  appendMessage(message, 'user');
-  userInput.value = '';
-  appendMessage('Mikuzka está respondiendo...', 'bot');
-
-  try {
-    const res = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message })
-    });
-    const data = await res.json();
-    chatbox.lastChild.textContent = '';
-    appendMessage(data.reply, 'bot');
-  } catch (err) {
-    chatbox.lastChild.textContent = '';
-    appendMessage('Error: No pudimos obtener respuesta.', 'bot');
+  function appendMessage(text, sender) {
+    const msg = document.createElement('div');
+    msg.classList.add('message', sender);
+    msg.textContent = text;
+    chatbox.appendChild(msg);
+    chatbox.scrollTop = chatbox.scrollHeight;
   }
-});
+
+  inputForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const message = userInput.value.trim();
+    if (!message) return;
+
+    appendMessage(message, 'user');
+    userInput.value = '';
+    appendMessage('Mikuzka está respondiendo...', 'bot');
+
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+      const data = await res.json();
+      chatbox.lastChild.textContent = '';
+      appendMessage(data.reply, 'bot');
+    } catch (err) {
+      chatbox.lastChild.textContent = '';
+      appendMessage('Error: No pudimos obtener respuesta.', 'bot');
+    }
+  });
+
+  // Chat toggle functionality
+  const chatWidget = document.getElementById('chat-widget');
+  const chatBody = document.getElementById('chat-body');
+  const chatToggle = document.getElementById('chat-toggle');
+
+  chatToggle.addEventListener('click', () => {
+    if (chatBody.style.display === "none") {
+      chatBody.style.display = "flex"; // expand
+      chatToggle.textContent = "_";
+    } else {
+      chatBody.style.display = "none"; // collapse
+      chatToggle.textContent = "▢";
+    }
+  });
 </script>
 
 </body>
