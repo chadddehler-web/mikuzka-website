@@ -30,29 +30,48 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1️⃣ Generate chatbot reply
+    // 1️⃣ Generate chatbot reply constrained to salsas
     const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: message }],
+      model: "gpt-4o-mini",
+      messages: [
+        {
+          role: "system",
+          content: `
+Eres un asistente de ventas de Mikuzka. Solo puedes hablar sobre los productos de la página web: 
+
+1. Aderezo Cilantro (300ml)
+2. Salsa Chilli-Churri (300ml)
+3. Salsa Cremo Haba (300ml)
+4. Salsa Habanero (300ml)
+
+Nunca hables sobre el clima, deportes, noticias u otros temas que no estén relacionados con las salsas. 
+Si alguien pregunta algo fuera de esto, responde amablemente que solo puedes hablar sobre las salsas y la página web.
+
+Proporciona detalles sobre sabor, uso, recomendaciones y precios si es relevante.
+Responde siempre de manera amigable y persuasiva, como un asistente de ventas.`
+        },
+        { role: "user", content: message }
+      ]
     });
 
     const reply = completion.choices[0].message.content;
 
-    // 2️⃣ Detect email or phone in message
+    // 2️⃣ Detect email or phone in the message
     const foundEmail = message.match(emailRegex);
     const foundPhone = message.match(phoneRegex);
 
     if (foundEmail || foundPhone) {
       // Send lead email
       await transporter.sendMail({
-        from: `"Block Mind AI" <${process.env.MAIL_USER}>`,
+        from: `"Mikuzka AI Lead" <${process.env.MAIL_USER}>`,
         to: "chadddehler@gmail.com",
-        subject: "🧠 New Lead from Block Mind AI",
-        text: `Message: ${message}\n\nDetected Email: ${foundEmail ? foundEmail[0] : "N/A"}\nDetected Phone: ${foundPhone ? foundPhone[0] : "N/A"}`,
+        subject: "🧠 New Lead from Mikuzka Chat",
+        text: `Message: ${message}\n\nDetected Email: ${foundEmail ? foundEmail[0] : "N/A"}\nDetected Phone: ${foundPhone ? foundPhone[0] : "N/A"}`
       });
     }
 
     res.status(200).json({ reply });
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "OpenAI API or Email error" });
