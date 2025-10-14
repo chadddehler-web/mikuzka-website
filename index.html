@@ -12,7 +12,7 @@
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      background: #fffaf0 url('https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5.jpg') center/cover fixed no-repeat;
+      background: #fffaf0 url('https://www.toptal.com/designers/subtlepatterns/patterns/pw_maze_white.png') repeat;
       color: #1f2937;
       overflow-x: hidden;
     }
@@ -28,6 +28,7 @@
       top: 0;
       z-index: 999;
       backdrop-filter: blur(6px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     nav h1 {
@@ -40,8 +41,8 @@
     }
 
     nav h1 img {
-      width: 60px;
-      height: 60px;
+      width: 70px;
+      height: 70px;
       margin-right: 10px;
       border-radius: 8px;
       background: #f59e0b;
@@ -68,15 +69,20 @@
     header {
       text-align: center;
       padding: 80px 20px 60px;
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(4px);
       margin-bottom: 40px;
+      position: relative;
     }
 
     header h2 {
       font-size: 3rem;
       margin-bottom: 10px;
-      color: #f97316;
+      color: #b91c1c;
+    }
+
+    header h2::before {
+      content: "🌶️🎩 ";
     }
 
     header p {
@@ -95,15 +101,24 @@
       box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       margin-bottom: 40px;
       scroll-margin-top: 70px;
+      position: relative;
     }
 
     section h3 {
       font-size: 2rem;
-      color: #f97316;
+      color: #b91c1c;
       text-align: center;
       margin-bottom: 40px;
       font-weight: 700;
       letter-spacing: 0.5px;
+      position: relative;
+    }
+
+    section h3::after {
+      content: "🌶️🌵🌶️";
+      display: block;
+      font-size: 1.2rem;
+      margin-top: 10px;
     }
 
     .product-grid {
@@ -114,9 +129,10 @@
     }
 
     .product {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      background: white url('https://cdn-icons-png.flaticon.com/512/1337/1337878.png') no-repeat bottom right;
+      background-size: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
       padding: 20px;
       text-align: center;
       transition: transform 0.3s, box-shadow 0.3s;
@@ -171,6 +187,7 @@
       text-align: center;
       padding: 25px 20px;
       font-size: 0.9rem;
+      position: relative;
     }
 
     .powered-by {
@@ -221,7 +238,7 @@
 </nav>
 
 <header id="inicio">
-  <h2>La salsa que más gusta 🌿</h2>
+  <h2>La salsa que más gusta 🌶️🎩</h2>
   <p>Sabores auténticos, ingredientes frescos y el toque especial de Mikuzka.  
   Descubre por qué todos aman nuestras salsas artesanales.</p>
 </header>
@@ -233,28 +250,28 @@
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/Diseno-sin-titulo-3.png" alt="Aderezo Cilantro Mikuzka">
       <h4>Aderezo Cilantro (300ml)</h4>
-      <p class="price">60 pesos</p>
+      <p class="price">🌶️ 60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
 
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5-1.jpg" alt="Salsa Chilli-Churri">
       <h4>Salsa Chilli-Churri (300ml)</h4>
-      <p class="price">60 pesos</p>
+      <p class="price">🌶️ 60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
 
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/6-1.jpg" alt="Salsa Cremo Haba">
       <h4>Salsa Cremo Haba (300ml)</h4>
-      <p class="price">60 pesos</p>
+      <p class="price">🌶️ 60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
 
     <div class="product">
       <img src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/7.jpg" alt="Salsa Habanero">
       <h4>Salsa Habanero (300ml)</h4>
-      <p class="price">60 pesos</p>
+      <p class="price">🌶️ 60 pesos</p>
       <button>🛒 Agregar al carrito</button>
     </div>
 
