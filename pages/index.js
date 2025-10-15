@@ -394,7 +394,7 @@ export default function Home() {
         <div
           style={{
             padding: "14px 16px",
-            borderBottom: "1px solid #eee",
+            borderBottom: "1px solid "#eee",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
@@ -474,7 +474,7 @@ export default function Home() {
           )}
         </div>
 
-        <div style={{ padding: 16, borderTop: "1px solid #eee" }}>
+        <div style={{ padding: 16, borderTop: "1px solid "#eee" }}>
           <div
             style={{
               display: "flex",
@@ -488,7 +488,8 @@ export default function Home() {
           <div
             style={{ fontSize: "0.9rem", color: "#6b7280", marginBottom: 12 }}
           >
-            Envío calculado en el Checkout (MX: $9.99 MXN, Intl: $30.00 MXN).
+            Envío calculado en el Checkout (MX: <b>$200 MXN</b>, Intl:{" "}
+            <b>$700 MXN</b>).
           </div>
           <button
             disabled={!cart.length}
@@ -508,6 +509,98 @@ export default function Home() {
           </button>
         </div>
       </aside>
+
+      {/* CHAT WIDGET */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: 20,
+          right: 20,
+          width: "92%",
+          maxWidth: 320,
+          borderRadius: 10,
+          overflow: "hidden",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+          zIndex: 60,
+        }}
+      >
+        <div
+          onClick={() => setChatOpen(!chatOpen)}
+          style={{
+            backgroundColor: "#f97316",
+            color: "white",
+            padding: "12px 15px",
+            fontWeight: 700,
+            textAlign: "center",
+            cursor: "pointer",
+          }}
+        >
+          💬 Soporte Mikuzka {chatOpen ? "▾" : "▸"}
+        </div>
+
+        {chatOpen && (
+          <div
+            style={{
+              background: "#f9fafb",
+              display: "flex",
+              flexDirection: "column",
+              height: 350,
+            }}
+          >
+            <div style={{ flex: 1, overflowY: "auto", padding: 10 }}>
+              {messages.map((msg, i) => (
+                <div
+                  key={i}
+                  style={{
+                    margin: "8px 0",
+                    padding: "8px 12px",
+                    borderRadius: 12,
+                    maxWidth: "80%",
+                    backgroundColor:
+                      msg.sender === "user" ? "#f97316" : "#e5e7eb",
+                    color: msg.sender === "user" ? "white" : "#111827",
+                    alignSelf:
+                      msg.sender === "user" ? "flex-end" : "flex-start",
+                  }}
+                >
+                  {msg.text}
+                </div>
+              ))}
+            </div>
+            <form
+              onSubmit={handleChatSubmit}
+              style={{ display: "flex", borderTop: "1px solid #d1d5db" }}
+            >
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Escribe tu mensaje..."
+                style={{
+                  flex: 1,
+                  border: "none",
+                  padding: 10,
+                  fontSize: "0.95rem",
+                  outline: "none",
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  backgroundColor: "#f97316",
+                  color: "white",
+                  border: "none",
+                  padding: "0 15px",
+                  cursor: "pointer",
+                  fontWeight: 700,
+                }}
+              >
+                Enviar
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
