@@ -394,7 +394,7 @@ export default function Home() {
         <div
           style={{
             padding: "14px 16px",
-            borderBottom: "1px solid "#eee",
+            borderBottom: "1px solid #eee",
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
