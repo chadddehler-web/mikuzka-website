@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import Head from "next/head";
 
 export default function Home() {
   // --- Chatbot ---
@@ -34,7 +35,7 @@ export default function Home() {
     }
   };
 
-  // --- Catalog (price in MXN cents for Stripe consistency) ---
+  // --- Catalog ---
   const catalog = {
     salsa_chilli_churri_300ml: {
       id: "salsa_chilli_churri_300ml",
@@ -71,7 +72,9 @@ export default function Home() {
   const products = Object.values(catalog);
 
   // --- Cart state ---
-  const [cart, setCart] = useState([]); // [{id, qty}]
+  const [cart, setCart] = useState([]);
+  const [cartOpen, setCartOpen] = useState(false);
+
   const cartCount = useMemo(
     () => cart.reduce((sum, it) => sum + it.qty, 0),
     [cart]
@@ -85,6 +88,7 @@ export default function Home() {
       }
       return [...prev, { id, qty: 1 }];
     });
+    setCartOpen(true);
   };
 
   const incQty = (id) =>
@@ -118,30 +122,44 @@ export default function Home() {
       maximumFractionDigits: 2,
     }).format(cents / 100);
 
-  // --- Sidebar cart ---
-  const [cartOpen, setCartOpen] = useState(false);
-
+  // --- Fixed Checkout Function ---
   const handleCheckout = async () => {
-    if (!cart.length) return;
+    if (!cart.length) {
+      alert("Tu carrito está vacío 🛒");
+      return;
+    }
+
     try {
+      console.log("Checkout clicked ✅ Cart:", cart);
+
       const lineItems = cart.map((it) => ({
         id: it.id,
         quantity: it.qty,
       }));
+
+      console.log("Sending items to checkout:", lineItems);
+
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ items: lineItems }),
       });
+
       const data = await res.json();
-      if (data?.url) {
+      console.log("Stripe checkout response:", data);
+
+      if (res.ok && data?.url) {
         window.location.href = data.url;
       } else {
-        alert(data?.error || "Error al crear la sesión de pago.");
+        console.error("Checkout error:", data.error || "No URL returned");
+        alert(
+          "❌ Error al crear el pago: " +
+            (data.error || "Verifica los logs del servidor.")
+        );
       }
     } catch (e) {
-      console.error(e);
-      alert("Error al conectar con Stripe.");
+      console.error("Stripe fetch error:", e);
+      alert("⚠️ Error al conectar con el servidor de Stripe.");
     }
   };
 
@@ -153,6 +171,14 @@ export default function Home() {
         color: "#1f2937",
       }}
     >
+      <Head>
+        <title>Mikuzka | La salsa que más gusta 🌶️</title>
+        <meta
+          name="description"
+          content="Salsas artesanales con ingredientes frescos y auténticos sabores mexicanos."
+        />
+      </Head>
+
       {/* NAVBAR */}
       <nav
         style={{
@@ -171,7 +197,6 @@ export default function Home() {
         <h1 style={{ fontSize: "1.6rem", fontWeight: 800, letterSpacing: 0.2 }}>
           Mikuzka
         </h1>
-
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <a href="#inicio" style={{ color: "#fff", textDecoration: "none" }}>
             Inicio
@@ -182,8 +207,6 @@ export default function Home() {
           <a href="#contacto" style={{ color: "#fff", textDecoration: "none" }}>
             Contacto
           </a>
-
-          {/* Cart button */}
           <button
             onClick={() => setCartOpen(true)}
             aria-label="Abrir carrito"
@@ -207,24 +230,21 @@ export default function Home() {
         id="inicio"
         style={{
           backgroundImage:
-            "url('https://tse3.mm.bing.net/th/id/OIP._z3OT9YQ8ScqkQA5afvYegHaJ4?cb=12&pid=Api')",
+            "url('https://cdn.pixabay.com/photo/2016/04/13/22/31/chili-1327669_1280.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           color: "white",
           textAlign: "center",
           padding: "120px 20px",
           position: "relative",
-          overflow: "hidden",
         }}
       >
-        {/* Subtle dim overlay */}
         <div
           style={{
             position: "absolute",
             inset: 0,
             background:
               "linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35))",
-            filter: "blur(0.5px)",
           }}
         />
         <div
@@ -301,10 +321,6 @@ export default function Home() {
                 textAlign: "center",
                 overflow: "hidden",
                 transform: p.featured ? "scale(1.03)" : "none",
-                animation: p.featured
-                  ? "pulseGlow 2.6s infinite alternate ease-in-out"
-                  : "none",
-                transition: "transform 0.2s ease",
               }}
             >
               <img
@@ -329,51 +345,29 @@ export default function Home() {
                     ⭐ Top Seller
                   </div>
                 )}
-                <h4
-                  style={{
-                    color: "#b91c1c",
-                    fontSize: "1.25rem",
-                    fontWeight: 800,
-                    margin: "4px 0 6px",
-                  }}
-                >
-                  {p.name}
-                </h4>
-                <p style={{ color: "#374151", fontSize: "0.95rem", marginBottom: 12 }}>
-                  {p.desc}
-                </p>
-                <p
-                  style={{
-                    color: "#065f46",
-                    fontWeight: 800,
-                    marginBottom: 12,
-                  }}
-                >
+                <h4 style={{ color: "#b91c1c", fontWeight: 800 }}>{p.name}</h4>
+                <p style={{ color: "#374151", fontSize: "0.95rem" }}>{p.desc}</p>
+                <p style={{ color: "#065f46", fontWeight: 800 }}>
                   {formatMXN(p.priceCents)}
                 </p>
-
-                <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
-                  <button
-                    onClick={() => addToCart(p.id)}
-                    style={{
-                      background: "linear-gradient(90deg,#f59e0b,#f97316)",
-                      color: "white",
-                      border: "none",
-                      padding: "10px 16px",
-                      borderRadius: 10,
-                      cursor: "pointer",
-                      fontWeight: 700,
-                    }}
-                  >
-                    🛒 Agregar al carrito
-                  </button>
-                </div>
+                <button
+                  onClick={() => addToCart(p.id)}
+                  style={{
+                    background: "linear-gradient(90deg,#f59e0b,#f97316)",
+                    color: "white",
+                    border: "none",
+                    padding: "10px 16px",
+                    borderRadius: 10,
+                    cursor: "pointer",
+                    fontWeight: 700,
+                  }}
+                >
+                  🛒 Agregar al carrito
+                </button>
               </div>
             </div>
           ))}
         </div>
-
-        {/* Shipping note */}
         <p
           style={{
             textAlign: "center",
@@ -382,7 +376,7 @@ export default function Home() {
             color: "#6b7280",
           }}
         >
-          * Envío calculado en el Checkout: MX nacional <b>$9.99</b> MXN, internacional <b>$30.00</b> MXN.
+          * Envío: México +$9.99 MXN | Internacional +$30 MXN
         </p>
       </section>
 
@@ -396,71 +390,13 @@ export default function Home() {
           borderTop: "4px solid #f97316",
         }}
       >
-        <h3 style={{ fontSize: "2.1rem", color: "#b91c1c", marginBottom: 12, fontWeight: 800 }}>
+        <h3 style={{ fontSize: "2.1rem", color: "#b91c1c", fontWeight: 800 }}>
           Pedidos y Ventas
         </h3>
-        <p style={{ fontSize: "1.05rem", marginBottom: 18 }}>
-          Para ventas directas y mayoreo favor de comunicarse:
-        </p>
-        <p>📞 462 - 291 - 2002</p>
-        <p>📞 462 - 170 - 6282 | 462 - 170 - 6308</p>
-        <p>📞 462 - 265 - 5775</p>
-        <p style={{ color: "#b91c1c", fontWeight: 700, marginBottom: 28 }}>
+        <p>📞 462-291-2002 | 462-170-6282 | 462-170-6308 | 462-265-5775</p>
+        <p style={{ color: "#b91c1c", fontWeight: 700 }}>
           ✉️ mikuzka.salsas@gmail.com
         </p>
-
-        <h4 style={{ color: "#b91c1c", marginTop: 20, fontWeight: 800 }}>
-          ¿Tienes alguna pregunta? ¡No seas tímido!
-        </h4>
-        <p>
-          Si necesitas una cotización especial o buscas algo en particular, llena el
-          formulario y te contactamos a la brevedad.
-        </p>
-
-        <form
-          onSubmit={(e) => e.preventDefault()}
-          style={{
-            maxWidth: 620,
-            margin: "26px auto 0",
-            display: "flex",
-            flexDirection: "column",
-            gap: 14,
-            textAlign: "left",
-          }}
-        >
-          <label>Nombre *</label>
-          <input
-            type="text"
-            required
-            style={{ padding: 12, borderRadius: 8, border: "1px solid #e5e7eb" }}
-          />
-          <label>Email *</label>
-          <input
-            type="email"
-            required
-            style={{ padding: 12, borderRadius: 8, border: "1px solid #e5e7eb" }}
-          />
-          <label>Mensaje</label>
-          <textarea
-            rows="4"
-            style={{ padding: 12, borderRadius: 8, border: "1px solid #e5e7eb" }}
-          />
-          <button
-            type="submit"
-            style={{
-              background: "linear-gradient(90deg,#f59e0b,#f97316)",
-              color: "white",
-              padding: "12px 18px",
-              borderRadius: 10,
-              border: "none",
-              fontWeight: 800,
-              cursor: "pointer",
-              alignSelf: "flex-start",
-            }}
-          >
-            Enviar
-          </button>
-        </form>
       </section>
 
       {/* FOOTER */}
@@ -473,287 +409,7 @@ export default function Home() {
         }}
       >
         © 2025 Mikuzka • La salsa que más gusta 🌶️
-        <p style={{ fontSize: "0.85rem", color: "#9ca3af" }}>
-          Hechas a mano en México 🇲🇽 | Powered by Yoghurrrrrrrrrrt!
-        </p>
       </footer>
-
-      {/* CART SIDEBAR */}
-      {cartOpen && (
-        <div
-          onClick={() => setCartOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.35)",
-            zIndex: 30,
-          }}
-        />
-      )}
-      <aside
-        style={{
-          position: "fixed",
-          top: 0,
-          right: cartOpen ? 0 : "-400px",
-          width: "100%",
-          maxWidth: 380,
-          height: "100vh",
-          background: "white",
-          boxShadow: "0 0 24px rgba(0,0,0,0.25)",
-          zIndex: 40,
-          transition: "right 0.25s ease",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
-        <div
-          style={{
-            padding: "14px 16px",
-            borderBottom: "1px solid #eee",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            background:
-              "linear-gradient(90deg, rgba(249,115,22,0.1), rgba(185,28,28,0.1))",
-          }}
-        >
-          <strong style={{ fontSize: "1.1rem" }}>Tu carrito</strong>
-          <button
-            onClick={() => setCartOpen(false)}
-            style={{
-              border: "none",
-              background: "transparent",
-              fontSize: "1.2rem",
-              cursor: "pointer",
-            }}
-            aria-label="Cerrar carrito"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div style={{ padding: 14, overflowY: "auto", flex: 1 }}>
-          {cart.length === 0 ? (
-            <p style={{ color: "#6b7280" }}>Tu carrito está vacío.</p>
-          ) : (
-            cart.map((it) => {
-              const p = catalog[it.id];
-              if (!p) return null;
-              return (
-                <div
-                  key={it.id}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "64px 1fr auto",
-                    gap: 10,
-                    alignItems: "center",
-                    padding: "10px 0",
-                    borderBottom: "1px solid #f3f4f6",
-                  }}
-                >
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    style={{
-                      width: 64,
-                      height: 64,
-                      objectFit: "cover",
-                      borderRadius: 8,
-                    }}
-                  />
-                  <div>
-                    <div style={{ fontWeight: 700, marginBottom: 4 }}>
-                      {p.name}
-                    </div>
-                    <div style={{ color: "#065f46", fontWeight: 700 }}>
-                      {formatMXN(p.priceCents)}
-                    </div>
-                    <div style={{ marginTop: 6, display: "flex", gap: 8 }}>
-                      <button
-                        onClick={() => decQty(it.id)}
-                        style={qtyBtnStyle}
-                        aria-label="Disminuir"
-                      >
-                        −
-                      </button>
-                      <span>{it.qty}</span>
-                      <button
-                        onClick={() => incQty(it.id)}
-                        style={qtyBtnStyle}
-                        aria-label="Aumentar"
-                      >
-                        +
-                      </button>
-                      <button
-                        onClick={() => removeItem(it.id)}
-                        style={{
-                          ...qtyBtnStyle,
-                          background: "transparent",
-                          border: "1px solid #ef4444",
-                          color: "#ef4444",
-                        }}
-                        aria-label="Eliminar"
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                  <div style={{ fontWeight: 800 }}>
-                    {formatMXN(p.priceCents * it.qty)}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-
-        <div style={{ padding: 16, borderTop: "1px solid #eee" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: 6,
-            }}
-          >
-            <span>Subtotal</span>
-            <strong>{formatMXN(subtotalCents)}</strong>
-          </div>
-          <div
-            style={{ fontSize: "0.9rem", color: "#6b7280", marginBottom: 12 }}
-          >
-            Envío calculado en el Checkout (MX: $9.99 MXN, Intl: $30.00 MXN).
-          </div>
-          <button
-            disabled={!cart.length}
-            onClick={handleCheckout}
-            style={{
-              width: "100%",
-              background: "linear-gradient(90deg,#f59e0b,#f97316)",
-              color: "white",
-              border: "none",
-              padding: "12px 16px",
-              borderRadius: 10,
-              cursor: cart.length ? "pointer" : "not-allowed",
-              fontWeight: 800,
-            }}
-          >
-            Pagar con Stripe
-          </button>
-        </div>
-      </aside>
-
-      {/* CHATBOT */}
-      <div
-        style={{
-          position: "fixed",
-          bottom: 20,
-          right: 20,
-          width: "92%",
-          maxWidth: 320,
-          borderRadius: 10,
-          overflow: "hidden",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-          zIndex: 50,
-        }}
-      >
-        <div
-          onClick={() => setChatOpen(!chatOpen)}
-          style={{
-            backgroundColor: "#f97316",
-            color: "white",
-            padding: "12px 15px",
-            fontWeight: 700,
-            textAlign: "center",
-            cursor: "pointer",
-          }}
-        >
-          💬 Soporte Mikuzka {chatOpen ? "▾" : "▸"}
-        </div>
-
-        {chatOpen && (
-          <div
-            style={{
-              background: "#f9fafb",
-              display: "flex",
-              flexDirection: "column",
-              height: 350,
-            }}
-          >
-            <div style={{ flex: 1, overflowY: "auto", padding: 10 }}>
-              {messages.map((msg, i) => (
-                <div
-                  key={i}
-                  style={{
-                    margin: "8px 0",
-                    padding: "8px 12px",
-                    borderRadius: 12,
-                    maxWidth: "80%",
-                    backgroundColor:
-                      msg.sender === "user" ? "#f97316" : "#e5e7eb",
-                    color: msg.sender === "user" ? "white" : "#111827",
-                    alignSelf:
-                      msg.sender === "user" ? "flex-end" : "flex-start",
-                  }}
-                >
-                  {msg.text}
-                </div>
-              ))}
-            </div>
-            <form
-              onSubmit={handleChatSubmit}
-              style={{ display: "flex", borderTop: "1px solid #d1d5db" }}
-            >
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Escribe tu mensaje..."
-                style={{
-                  flex: 1,
-                  border: "none",
-                  padding: 10,
-                  fontSize: "0.95rem",
-                  outline: "none",
-                }}
-              />
-              <button
-                type="submit"
-                style={{
-                  backgroundColor: "#f97316",
-                  color: "white",
-                  border: "none",
-                  padding: "0 15px",
-                  cursor: "pointer",
-                  fontWeight: 700,
-                }}
-              >
-                Enviar
-              </button>
-            </form>
-          </div>
-        )}
-      </div>
-
-      {/* Animations */}
-      <style jsx>{`
-        @keyframes pulseGlow {
-          0% {
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
-          }
-          100% {
-            box-shadow: 0 0 24px rgba(245, 158, 11, 0.95);
-          }
-        }
-      `}</style>
     </div>
   );
 }
-
-const qtyBtnStyle = {
-  background: "transparent",
-  border: "1px solid #d1d5db",
-  borderRadius: 8,
-  padding: "2px 10px",
-  cursor: "pointer",
-  fontWeight: 700,
-};
