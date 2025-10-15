@@ -88,7 +88,7 @@ export default function Home() {
       }
       return [...prev, { id, qty: 1 }];
     });
-    setCartOpen(true);
+    setCartOpen(true); // open cart on add
   };
 
   const incQty = (id) =>
@@ -122,6 +122,7 @@ export default function Home() {
       maximumFractionDigits: 2,
     }).format(cents / 100);
 
+  // --- Checkout ---
   const handleCheckout = async () => {
     if (!cart.length) {
       alert("Tu carrito está vacío 🛒");
@@ -244,7 +245,7 @@ export default function Home() {
             padding: "36px 20px",
           }}
         >
-          <h2 style={{ fontSize: "2.6rem", fontWeight: 800 }}>
+          <h2 style={{ fontSize: "2.6rem", fontWeight: 800, lineHeight: 1.2 }}>
             El sabor que enciende tus sentidos 🌶️
           </h2>
           <p style={{ fontSize: "1.15rem", margin: "16px 0 22px" }}>
@@ -307,6 +308,7 @@ export default function Home() {
                 border: p.featured ? "3px solid #f59e0b" : "1px solid #eee",
                 textAlign: "center",
                 overflow: "hidden",
+                transform: p.featured ? "scale(1.03)" : "none",
               }}
             >
               <img
@@ -354,9 +356,40 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* Shipping note */}
+        <p
+          style={{
+            textAlign: "center",
+            marginTop: 16,
+            fontSize: "0.92rem",
+            color: "#6b7280",
+          }}
+        >
+          * Envío calculado en el Checkout: México <b>$200 MXN</b>, Internacional{" "}
+          <b>$700 MXN</b>.
+        </p>
       </section>
 
-      {/* CART */}
+      {/* CONTACT (anchor target only; content optional) */}
+      <section id="contacto" style={{ padding: "1px 0" }} />
+
+      {/* FOOTER */}
+      <footer
+        style={{
+          background: "#111827",
+          color: "white",
+          textAlign: "center",
+          padding: "28px 18px",
+        }}
+      >
+        © 2025 Mikuzka • La salsa que más gusta 🌶️
+        <p style={{ fontSize: "0.85rem", color: "#9ca3af" }}>
+          Hechas a mano en México 🇲🇽 | Powered by Yoghurrrrrrrrrrt!
+        </p>
+      </footer>
+
+      {/* CART OVERLAY */}
       {cartOpen && (
         <div
           onClick={() => setCartOpen(false)}
@@ -369,6 +402,7 @@ export default function Home() {
         />
       )}
 
+      {/* CART SIDEBAR */}
       <aside
         style={{
           position: "fixed",
@@ -392,6 +426,8 @@ export default function Home() {
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
+            background:
+              "linear-gradient(90deg, rgba(249,115,22,0.06), rgba(185,28,28,0.06))",
           }}
         >
           <strong>Tu carrito</strong>
@@ -403,6 +439,7 @@ export default function Home() {
               fontSize: "1.2rem",
               cursor: "pointer",
             }}
+            aria-label="Cerrar carrito"
           >
             ✕
           </button>
@@ -438,16 +475,26 @@ export default function Home() {
                     }}
                   />
                   <div>
-                    <div style={{ fontWeight: 700 }}>{p.name}</div>
+                    <div style={{ fontWeight: 700, marginBottom: 4 }}>
+                      {p.name}
+                    </div>
                     <div style={{ color: "#065f46", fontWeight: 700 }}>
                       {formatMXN(p.priceCents)}
                     </div>
                     <div style={{ marginTop: 6, display: "flex", gap: 8 }}>
-                      <button onClick={() => decQty(it.id)} style={qtyBtnStyle}>
+                      <button
+                        onClick={() => decQty(it.id)}
+                        style={qtyBtnStyle}
+                        aria-label="Disminuir"
+                      >
                         −
                       </button>
                       <span>{it.qty}</span>
-                      <button onClick={() => incQty(it.id)} style={qtyBtnStyle}>
+                      <button
+                        onClick={() => incQty(it.id)}
+                        style={qtyBtnStyle}
+                        aria-label="Aumentar"
+                      >
                         +
                       </button>
                       <button
@@ -458,10 +505,14 @@ export default function Home() {
                           border: "1px solid #ef4444",
                           color: "#ef4444",
                         }}
+                        aria-label="Eliminar"
                       >
                         Eliminar
                       </button>
                     </div>
+                  </div>
+                  <div style={{ fontWeight: 800 }}>
+                    {formatMXN(p.priceCents * it.qty)}
                   </div>
                 </div>
               );
@@ -505,11 +556,11 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* CHAT */}
+      {/* CHAT WIDGET (auto-lifts when cart is open) */}
       <div
         style={{
           position: "fixed",
-          bottom: 20,
+          bottom: cartOpen ? 380 : 20, // lift chat up when cart is open
           right: 20,
           width: "92%",
           maxWidth: 320,
@@ -517,6 +568,7 @@ export default function Home() {
           overflow: "hidden",
           boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
           zIndex: 60,
+          transition: "bottom 0.3s ease",
         }}
       >
         <div
@@ -596,6 +648,17 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      <style jsx>{`
+        @keyframes pulseGlow {
+          0% {
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
+          }
+          100% {
+            box-shadow: 0 0 24px rgba(245, 158, 11, 0.95);
+          }
+        }
+      `}</style>
     </div>
   );
 }
