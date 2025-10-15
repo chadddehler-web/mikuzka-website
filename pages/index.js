@@ -5,11 +5,32 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
 
+  // 🔁 --- Stripe Checkout (Connect) ---
+  const handleCheckout = async (productId) => {
+    try {
+      const res = await fetch("/api/checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product: productId }),
+      });
+      const data = await res.json();
+      if (data?.url) {
+        window.location.href = data.url; // Redirect to Stripe Checkout
+      } else {
+        alert("Error al crear la sesión de pago.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Error al conectar con Stripe.");
+    }
+  };
+
+  // 💬 --- Chat helpers ---
   const appendMessage = (text, sender) => {
     setMessages((prev) => [...prev, { text, sender }]);
   };
 
-  const handleSubmit = async (e) => {
+  const handleChatSubmit = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
     appendMessage(input, "user");
@@ -34,6 +55,33 @@ export default function Home() {
       ]);
     }
   };
+
+  const products = [
+    {
+      id: "aderezo_cilantro_300ml",
+      img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/Diseno-sin-titulo-3.png",
+      name: "Aderezo Cilantro (300ml)",
+      priceLabel: "60 pesos",
+    },
+    {
+      id: "salsa_chilli_churri_300ml",
+      img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5-1.jpg",
+      name: "Salsa Chilli-Churri (300ml)",
+      priceLabel: "60 pesos",
+    },
+    {
+      id: "salsa_cremo_haba_300ml",
+      img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/6-1.jpg",
+      name: "Salsa Cremo Haba (300ml)",
+      priceLabel: "60 pesos",
+    },
+    {
+      id: "salsa_habanero_300ml",
+      img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/7.jpg",
+      name: "Salsa Habanero (300ml)",
+      priceLabel: "60 pesos",
+    },
+  ];
 
   return (
     <div
@@ -84,10 +132,20 @@ export default function Home() {
       </nav>
 
       {/* 🧄 Header */}
-      <header id="inicio" style={{ textAlign: "center", padding: "80px 20px 60px" }}>
-        <h2 style={{ fontSize: "3rem", color: "#b91c1c" }}>La salsa que más gusta 🌿</h2>
+      <header
+        id="inicio"
+        style={{
+          textAlign: "center",
+          padding: "80px 20px 60px",
+          background: "rgba(255, 255, 255, 0.95)",
+          marginBottom: 40,
+        }}
+      >
+        <h2 style={{ fontSize: "3rem", color: "#b91c1c", marginBottom: 10 }}>
+          La salsa que más gusta 🌿
+        </h2>
         <p style={{ fontSize: "1.2rem", color: "#374151", maxWidth: 700, margin: "auto" }}>
-          Sabores auténticos, ingredientes frescos y el toque especial de Mikuzka.  
+          Sabores auténticos, ingredientes frescos y el toque especial de Mikuzka.{" "}
           Descubre por qué todos aman nuestras salsas artesanales.
         </p>
       </header>
@@ -103,9 +161,19 @@ export default function Home() {
           borderRadius: 16,
           boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
           marginBottom: 40,
+          scrollMarginTop: 70,
         }}
       >
-        <h3 style={{ fontSize: "2rem", color: "#b91c1c", textAlign: "center" }}>
+        <h3
+          style={{
+            fontSize: "2rem",
+            color: "#b91c1c",
+            textAlign: "center",
+            marginBottom: 40,
+            fontWeight: 700,
+            letterSpacing: 0.5,
+          }}
+        >
           Selección de productos
         </h3>
 
@@ -117,26 +185,9 @@ export default function Home() {
             justifyItems: "center",
           }}
         >
-          {[
-            {
-              img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/Diseno-sin-titulo-3.png",
-              name: "Aderezo Cilantro (300ml)",
-            },
-            {
-              img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5-1.jpg",
-              name: "Salsa Chilli-Churri (300ml)",
-            },
-            {
-              img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/6-1.jpg",
-              name: "Salsa Cremo Haba (300ml)",
-            },
-            {
-              img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/7.jpg",
-              name: "Salsa Habanero (300ml)",
-            },
-          ].map((p, i) => (
+          {products.map((p) => (
             <div
-              key={i}
+              key={p.id}
               style={{
                 background: "white",
                 borderRadius: 16,
@@ -144,24 +195,33 @@ export default function Home() {
                 padding: 20,
                 textAlign: "center",
                 width: 200,
+                transition: "transform 0.3s, box-shadow 0.3s",
               }}
             >
               <img
                 src={p.img}
                 alt={p.name}
-                style={{ width: 180, borderRadius: 10, marginBottom: 15 }}
+                style={{ width: 180, height: "auto", borderRadius: 10, marginBottom: 15 }}
               />
-              <h4 style={{ margin: "10px 0 5px" }}>{p.name}</h4>
-              <p style={{ color: "#065f46", fontWeight: "bold" }}>60 pesos</p>
+              <h4 style={{ margin: "10px 0 5px", color: "#111827", fontSize: "1.1rem", fontWeight: 600 }}>
+                {p.name}
+              </h4>
+              <p style={{ fontSize: "1.1rem", color: "#065f46", fontWeight: "bold", marginBottom: 10 }}>
+                {p.priceLabel}
+              </p>
               <button
+                onClick={() => handleCheckout(p.id)}
                 style={{
                   background: "linear-gradient(90deg, #f59e0b, #f97316)",
                   color: "white",
                   border: "none",
                   padding: "10px 18px",
                   borderRadius: 8,
+                  fontSize: "0.95rem",
                   cursor: "pointer",
                 }}
+                onMouseOver={(e) => (e.currentTarget.style.background = "linear-gradient(90deg, #b45309, #f97316)")}
+                onMouseOut={(e) => (e.currentTarget.style.background = "linear-gradient(90deg, #f59e0b, #f97316)")}
               >
                 🛒 Agregar al carrito
               </button>
@@ -171,8 +231,23 @@ export default function Home() {
       </section>
 
       {/* 📞 Contacto */}
-      <section id="contacto" style={{ textAlign: "center", marginBottom: 40 }}>
-        <h3 style={{ fontSize: "2rem", color: "#b91c1c" }}>Contáctanos</h3>
+      <section
+        id="contacto"
+        style={{
+          textAlign: "center",
+          padding: "60px 20px",
+          maxWidth: 1100,
+          margin: "auto",
+          background: "rgba(255,255,255,0.92)",
+          borderRadius: 16,
+          boxShadow: "0 10px 25px rgba(0,0,0,0.1)",
+          marginBottom: 40,
+          scrollMarginTop: 70,
+        }}
+      >
+        <h3 style={{ fontSize: "2rem", color: "#b91c1c", marginBottom: 20, fontWeight: 700 }}>
+          Contáctanos
+        </h3>
         <p><strong>Correo:</strong> contacto@mikuzka.com.mx</p>
         <p>
           <strong>Instagram:</strong>{" "}
@@ -190,21 +265,24 @@ export default function Home() {
           textAlign: "center",
           padding: 25,
           fontSize: "0.9rem",
+          position: "relative",
         }}
       >
         © 2025 Mikuzka • La salsa que más gusta 🌶️
-        <p style={{ color: "#9ca3af", fontSize: "0.8rem", marginTop: 5 }}>
+        <p className="powered-by" style={{ textAlign: "center", fontSize: "0.8rem", color: "#9ca3af", marginTop: 5 }}>
           Powered by Yoghurrrrrrrrrrt!
         </p>
       </footer>
 
-      {/* 💬 Chatbot */}
+      {/* 💬 Chat Widget */}
       <div
+        id="chat-widget"
         style={{
           position: "fixed",
           bottom: 20,
           right: 20,
           width: 300,
+          fontFamily: "'Inter', sans-serif",
           boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
           borderRadius: 10,
           overflow: "hidden",
@@ -212,19 +290,21 @@ export default function Home() {
         }}
       >
         <div
+          id="chat-header"
           style={{
             backgroundColor: "#f97316",
             color: "white",
             padding: "12px 15px",
             fontWeight: 600,
-            textAlign: "center",
             cursor: "pointer",
+            textAlign: "center",
             position: "relative",
           }}
           onClick={() => setChatOpen(!chatOpen)}
         >
           💬 Soporte Mikuzka
           <button
+            id="chat-toggle"
             style={{
               position: "absolute",
               right: 10,
@@ -241,8 +321,8 @@ export default function Home() {
         </div>
 
         {chatOpen && (
-          <div style={{ background: "#f9fafb", display: "flex", flexDirection: "column" }}>
-            <div style={{ padding: 10, height: 250, overflowY: "auto", flex: 1 }}>
+          <div id="chat-body" style={{ background: "#f9fafb", maxHeight: 400, display: "flex", flexDirection: "column" }}>
+            <div id="chatbox" style={{ padding: 10, height: 250, overflowY: "auto", flex: 1 }}>
               {messages.map((msg, i) => (
                 <div
                   key={i}
@@ -251,6 +331,8 @@ export default function Home() {
                     padding: "8px 12px",
                     borderRadius: 12,
                     maxWidth: "80%",
+                    wordWrap: "break-word",
+                    lineHeight: 1.4,
                     backgroundColor: msg.sender === "user" ? "#f97316" : "#e5e7eb",
                     color: msg.sender === "user" ? "white" : "#111827",
                     alignSelf: msg.sender === "user" ? "flex-end" : "flex-start",
@@ -260,23 +342,20 @@ export default function Home() {
                 </div>
               ))}
             </div>
-
-            <form onSubmit={handleSubmit} style={{ display: "flex", borderTop: "1px solid #d1d5db" }}>
+            <form id="inputForm" onSubmit={handleChatSubmit} style={{ display: "flex", borderTop: "1px solid #d1d5db" }}>
               <input
                 type="text"
+                id="userInput"
+                placeholder="Escribe tu mensaje..."
+                autoComplete="off"
+                required
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                placeholder="Escribe tu mensaje..."
-                style={{
-                  flex: 1,
-                  border: "none",
-                  padding: 10,
-                  fontSize: "0.9rem",
-                  outline: "none",
-                }}
+                style={{ flex: 1, border: "none", padding: 10, fontSize: "0.9rem", outline: "none" }}
               />
               <button
                 type="submit"
+                id="sendBtn"
                 style={{
                   backgroundColor: "#f97316",
                   color: "white",
