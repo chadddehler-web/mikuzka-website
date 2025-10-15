@@ -1,6 +1,5 @@
 import Stripe from "stripe";
 
-// Use your PLATFORM secret key (sk_live_... or sk_test_...)
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // All prices are MXN cents
@@ -38,7 +37,6 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Cart is empty" });
     }
 
-    // Build line_items for Stripe Checkout
     const line_items = items
       .map(({ id, quantity }) => {
         const p = CATALOG[id];
@@ -58,7 +56,7 @@ export default async function handler(req, res) {
       })
       .filter(Boolean);
 
-    // Updated shipping options (amounts in MXN cents)
+    // Updated shipping options (MXN cents)
     const shipping_options = [
       {
         shipping_rate_data: {
@@ -125,8 +123,7 @@ export default async function handler(req, res) {
         },
       },
       {
-        // Charge through the CONNECTED account
-        stripeAccount: process.env.STRIPE_CONNECTED_ACCOUNT_ID,
+        stripeAccount: process.env.STRIPE_CONNECTED_ACCOUNT_ID, // charge on connected account
       }
     );
 
