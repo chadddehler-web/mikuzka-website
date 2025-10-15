@@ -52,12 +52,12 @@ export default function Home() {
     }
   };
 
-  // 🌶️ Products
+  // 🌶️ Product list
   const products = [
     {
       id: "salsa_chilli_churri_300ml",
       name: "Salsa Chilli-Churri (300ml)",
-      desc: "Nuestra salsa estrella — fusión de chile seco, especias frescas y notas ahumadas irresistibles.",
+      desc: "Nuestra salsa estrella — una fusión vibrante de chiles secos, ajo, especias y notas ahumadas irresistibles.",
       img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5-1.jpg",
       price: "60 pesos",
       featured: true,
@@ -65,21 +65,21 @@ export default function Home() {
     {
       id: "aderezo_cilantro_300ml",
       name: "Aderezo Cilantro (300ml)",
-      desc: "Fresca y herbal, perfecta para carnes, tacos y ensaladas.",
+      desc: "Refrescante y herbal, ideal para carnes, tacos o ensaladas.",
       img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/Diseno-sin-titulo-3.png",
       price: "60 pesos",
     },
     {
       id: "salsa_cremo_haba_300ml",
       name: "Salsa Cremo Haba (300ml)",
-      desc: "Cremosa, con habanero suave y un toque ahumado inolvidable.",
+      desc: "Cremosa y suave, con habanero ligero y un sabor ahumado equilibrado.",
       img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/6-1.jpg",
       price: "60 pesos",
     },
     {
       id: "salsa_habanero_300ml",
       name: "Salsa Habanero (300ml)",
-      desc: "Poderosamente picante, hecha para los amantes del fuego y el sabor intenso.",
+      desc: "Intensa, picante y llena de carácter — para los valientes amantes del fuego.",
       img: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/7.jpg",
       price: "60 pesos",
     },
@@ -91,6 +91,8 @@ export default function Home() {
         fontFamily: "'Inter', sans-serif",
         backgroundColor: "#fff8f0",
         color: "#1f2937",
+        margin: 0,
+        padding: 0,
       }}
     >
       {/* 🔸 NAVBAR */}
@@ -101,46 +103,41 @@ export default function Home() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          padding: "16px 30px",
+          padding: "16px 24px",
           position: "sticky",
           top: 0,
           zIndex: 10,
-          boxShadow: "0 4px 12px rgba(0,0,0,0.2)",
+          boxShadow: "0 4px 12px rgba(0,0,0,0.25)",
         }}
       >
-        <h1 style={{ display: "flex", alignItems: "center", fontSize: "1.8rem" }}>
-          <img
-            src="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/Post-Mayo-GnK-300x300.png"
-            alt="Mikuzka Logo"
-            style={{
-              width: 60,
-              height: 60,
-              borderRadius: 8,
-              marginRight: 10,
-              background: "#fff",
-              padding: 3,
-            }}
-          />
-          Mikuzka
-        </h1>
-        <ul style={{ display: "flex", listStyle: "none", gap: 20, margin: 0 }}>
+        <h1 style={{ fontSize: "1.6rem", fontWeight: 700 }}>Mikuzka</h1>
+        <ul
+          style={{
+            display: "flex",
+            listStyle: "none",
+            gap: "18px",
+            margin: 0,
+            padding: 0,
+            fontWeight: 500,
+          }}
+        >
           <li><a href="#inicio" style={{ color: "white", textDecoration: "none" }}>Inicio</a></li>
           <li><a href="#productos" style={{ color: "white", textDecoration: "none" }}>Productos</a></li>
           <li><a href="#contacto" style={{ color: "white", textDecoration: "none" }}>Contacto</a></li>
         </ul>
       </nav>
 
-      {/* 🌶️ HERO SECTION */}
+      {/* 🌄 HERO SECTION */}
       <header
         id="inicio"
         style={{
-          textAlign: "center",
-          padding: "120px 20px",
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1613145993481-9a1b92f04c1c?auto=format&fit=crop&w=1600&q=80')",
+            "url('https://tse3.mm.bing.net/th/id/OIP._z3OT9YQ8ScqkQA5afvYegHaJ4?cb=12&pid=Api')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           color: "white",
+          textAlign: "center",
+          padding: "120px 20px",
           position: "relative",
         }}
       >
@@ -149,15 +146,15 @@ export default function Home() {
             backgroundColor: "rgba(0,0,0,0.55)",
             borderRadius: 20,
             padding: "40px 20px",
-            display: "inline-block",
             maxWidth: 600,
+            margin: "auto",
           }}
         >
-          <h2 style={{ fontSize: "3rem", fontWeight: 700, lineHeight: 1.2 }}>
+          <h2 style={{ fontSize: "2.8rem", fontWeight: 700, lineHeight: 1.2 }}>
             El sabor que enciende tus sentidos 🌶️
           </h2>
           <p style={{ fontSize: "1.2rem", margin: "20px 0" }}>
-            Salsas artesanales hechas con pasión mexicana y los ingredientes más frescos.
+            Hechas con ingredientes frescos — chiles, ajo, cilantro y amor mexicano.
           </p>
           <a
             href="#productos"
@@ -211,13 +208,15 @@ export default function Home() {
                 background: "white",
                 borderRadius: 20,
                 boxShadow: p.featured
-                  ? "0 0 25px rgba(245, 158, 11, 0.8)"
+                  ? "0 0 25px rgba(245, 158, 11, 0.9)"
                   : "0 8px 20px rgba(0,0,0,0.1)",
                 border: p.featured ? "3px solid #f59e0b" : "none",
                 textAlign: "center",
                 overflow: "hidden",
                 transform: p.featured ? "scale(1.05)" : "none",
-                transition: "all 0.3s ease",
+                animation: p.featured
+                  ? "pulseGlow 2.5s infinite alternate ease-in-out"
+                  : "none",
               }}
             >
               <img
@@ -246,9 +245,15 @@ export default function Home() {
                     ⭐ Top Seller
                   </div>
                 )}
-                <h4 style={{ color: "#b91c1c", fontSize: "1.4rem", fontWeight: 700 }}>{p.name}</h4>
-                <p style={{ color: "#374151", fontSize: "0.95rem", marginBottom: 15 }}>{p.desc}</p>
-                <p style={{ color: "#065f46", fontWeight: "bold", marginBottom: 10 }}>{p.price}</p>
+                <h4 style={{ color: "#b91c1c", fontSize: "1.4rem", fontWeight: 700 }}>
+                  {p.name}
+                </h4>
+                <p style={{ color: "#374151", fontSize: "0.95rem", marginBottom: 15 }}>
+                  {p.desc}
+                </p>
+                <p style={{ color: "#065f46", fontWeight: "bold", marginBottom: 10 }}>
+                  {p.price}
+                </p>
                 <button
                   onClick={() => handleCheckout(p.id)}
                   style={{
@@ -348,7 +353,8 @@ export default function Home() {
           position: "fixed",
           bottom: 20,
           right: 20,
-          width: 320,
+          width: "90%",
+          maxWidth: 320,
           borderRadius: 10,
           overflow: "hidden",
           boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
@@ -428,6 +434,18 @@ export default function Home() {
           </div>
         )}
       </div>
+
+      {/* 🔥 Animation */}
+      <style jsx>{`
+        @keyframes pulseGlow {
+          0% {
+            box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+          }
+          100% {
+            box-shadow: 0 0 25px rgba(245, 158, 11, 1);
+          }
+        }
+      `}</style>
     </div>
   );
 }
