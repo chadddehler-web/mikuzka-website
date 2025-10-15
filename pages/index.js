@@ -122,7 +122,6 @@ export default function Home() {
       maximumFractionDigits: 2,
     }).format(cents / 100);
 
-  // --- Checkout ---
   const handleCheckout = async () => {
     if (!cart.length) {
       alert("Tu carrito está vacío 🛒");
@@ -130,7 +129,6 @@ export default function Home() {
     }
 
     try {
-      console.log("Checkout clicked ✅ Cart:", cart);
       const lineItems = cart.map((it) => ({
         id: it.id,
         quantity: it.qty,
@@ -143,8 +141,6 @@ export default function Home() {
       });
 
       const data = await res.json();
-      console.log("Stripe checkout response:", data);
-
       if (res.ok && data?.url) {
         window.location.href = data.url;
       } else {
@@ -248,7 +244,7 @@ export default function Home() {
             padding: "36px 20px",
           }}
         >
-          <h2 style={{ fontSize: "2.6rem", fontWeight: 800, lineHeight: 1.2 }}>
+          <h2 style={{ fontSize: "2.6rem", fontWeight: 800 }}>
             El sabor que enciende tus sentidos 🌶️
           </h2>
           <p style={{ fontSize: "1.15rem", margin: "16px 0 22px" }}>
@@ -311,7 +307,6 @@ export default function Home() {
                 border: p.featured ? "3px solid #f59e0b" : "1px solid #eee",
                 textAlign: "center",
                 overflow: "hidden",
-                transform: p.featured ? "scale(1.03)" : "none",
               }}
             >
               <img
@@ -361,7 +356,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CART OVERLAY */}
+      {/* CART */}
       {cartOpen && (
         <div
           onClick={() => setCartOpen(false)}
@@ -374,7 +369,6 @@ export default function Home() {
         />
       )}
 
-      {/* CART SIDEBAR */}
       <aside
         style={{
           position: "fixed",
@@ -413,6 +407,7 @@ export default function Home() {
             ✕
           </button>
         </div>
+
         <div style={{ padding: 14, overflowY: "auto", flex: 1 }}>
           {cart.length === 0 ? (
             <p style={{ color: "#6b7280" }}>Tu carrito está vacío.</p>
@@ -474,7 +469,7 @@ export default function Home() {
           )}
         </div>
 
-        <div style={{ padding: 16, borderTop: "1px solid "#eee" }}>
+        <div style={{ padding: 16, borderTop: "1px solid #eee" }}>
           <div
             style={{
               display: "flex",
@@ -510,7 +505,7 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* CHAT WIDGET */}
+      {/* CHAT */}
       <div
         style={{
           position: "fixed",
