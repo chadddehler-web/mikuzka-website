@@ -88,7 +88,7 @@ export default function Home() {
       }
       return [...prev, { id, qty: 1 }];
     });
-    setCartOpen(true); // open cart on add
+    setCartOpen(true);
   };
 
   const incQty = (id) =>
@@ -218,7 +218,7 @@ export default function Home() {
         id="inicio"
         style={{
           backgroundImage:
-            "url('https://cdn.pixabay.com/photo/2016/04/13/22/31/chili-1327669_1280.jpg')",
+            "url('https://cdn.pixabay.com/photo/2017/01/04/19/00/pepper-1958419_1280.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           color: "white",
@@ -357,7 +357,6 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Shipping note */}
         <p
           style={{
             textAlign: "center",
@@ -370,24 +369,6 @@ export default function Home() {
           <b>$700 MXN</b>.
         </p>
       </section>
-
-      {/* CONTACT (anchor target only; content optional) */}
-      <section id="contacto" style={{ padding: "1px 0" }} />
-
-      {/* FOOTER */}
-      <footer
-        style={{
-          background: "#111827",
-          color: "white",
-          textAlign: "center",
-          padding: "28px 18px",
-        }}
-      >
-        © 2025 Mikuzka • La salsa que más gusta 🌶️
-        <p style={{ fontSize: "0.85rem", color: "#9ca3af" }}>
-          Hechas a mano en México 🇲🇽 | Powered by Yoghurrrrrrrrrrt!
-        </p>
-      </footer>
 
       {/* CART OVERLAY */}
       {cartOpen && (
@@ -482,19 +463,11 @@ export default function Home() {
                       {formatMXN(p.priceCents)}
                     </div>
                     <div style={{ marginTop: 6, display: "flex", gap: 8 }}>
-                      <button
-                        onClick={() => decQty(it.id)}
-                        style={qtyBtnStyle}
-                        aria-label="Disminuir"
-                      >
+                      <button onClick={() => decQty(it.id)} style={qtyBtnStyle}>
                         −
                       </button>
                       <span>{it.qty}</span>
-                      <button
-                        onClick={() => incQty(it.id)}
-                        style={qtyBtnStyle}
-                        aria-label="Aumentar"
-                      >
+                      <button onClick={() => incQty(it.id)} style={qtyBtnStyle}>
                         +
                       </button>
                       <button
@@ -505,7 +478,6 @@ export default function Home() {
                           border: "1px solid #ef4444",
                           color: "#ef4444",
                         }}
-                        aria-label="Eliminar"
                       >
                         Eliminar
                       </button>
@@ -556,178 +528,101 @@ export default function Home() {
         </div>
       </aside>
 
-     {/* CHAT WIDGET (hidden when cart is open) */}
-{!cartOpen && (
-  <div
-    style={{
-      position: "fixed",
-      bottom: 20,
-      right: 20,
-      width: "92%",
-      maxWidth: 320,
-      borderRadius: 10,
-      overflow: "hidden",
-      boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
-      zIndex: 60,
-      transition: "bottom 0.3s ease",
-    }}
-  >
-    <div
-      onClick={() => setChatOpen(!chatOpen)}
-      style={{
-        backgroundColor: "#f97316",
-        color: "white",
-        padding: "12px 15px",
-        fontWeight: 700,
-        textAlign: "center",
-        cursor: "pointer",
-      }}
-    >
-      💬 Soporte Mikuzka {chatOpen ? "▾" : "▸"}
-    </div>
-
-    {chatOpen && (
-      <div
-        style={{
-          background: "#f9fafb",
-          display: "flex",
-          flexDirection: "column",
-          height: 350,
-        }}
-      >
-        <div style={{ flex: 1, overflowY: "auto", padding: 10 }}>
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              style={{
-                margin: "8px 0",
-                padding: "8px 12px",
-                borderRadius: 12,
-                maxWidth: "80%",
-                backgroundColor:
-                  msg.sender === "user" ? "#f97316" : "#e5e7eb",
-                color: msg.sender === "user" ? "white" : "#111827",
-                alignSelf:
-                  msg.sender === "user" ? "flex-end" : "flex-start",
-              }}
-            >
-              {msg.text}
-            </div>
-          ))}
-        </div>
-        <form
-          onSubmit={handleChatSubmit}
-          style={{ display: "flex", borderTop: "1px solid #d1d5db" }}
+      {/* CHAT WIDGET (hidden when cart is open) */}
+      {!cartOpen && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: 20,
+            right: 20,
+            width: "92%",
+            maxWidth: 320,
+            borderRadius: 10,
+            overflow: "hidden",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+            zIndex: 60,
+            transition: "bottom 0.3s ease",
+            background: "white",
+          }}
         >
-          <input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Escribe tu mensaje..."
-            style={{
-              flex: 1,
-              border: "none",
-              padding: 10,
-              fontSize: "0.95rem",
-              outline: "none",
-            }}
-          />
-          <button
-            type="submit"
+          <div
+            onClick={() => setChatOpen(!chatOpen)}
             style={{
               backgroundColor: "#f97316",
               color: "white",
-              border: "none",
-              padding: "0 15px",
-              cursor: "pointer",
+              padding: "12px 15px",
               fontWeight: 700,
+              textAlign: "center",
+              cursor: "pointer",
             }}
           >
-            Enviar
-          </button>
-        </form>
-      </div>
-    )}
-  </div>
-)}
+            💬 Soporte Mikuzka {chatOpen ? "▾" : "▸"}
+          </div>
 
-          💬 Soporte Mikuzka {chatOpen ? "▾" : "▸"}
-        </div>
-
-        {chatOpen && (
-          <div
-            style={{
-              background: "#f9fafb",
-              display: "flex",
-              flexDirection: "column",
-              height: 350,
-            }}
-          >
-            <div style={{ flex: 1, overflowY: "auto", padding: 10 }}>
-              {messages.map((msg, i) => (
-                <div
-                  key={i}
+          {chatOpen && (
+            <div
+              style={{
+                background: "#f9fafb",
+                display: "flex",
+                flexDirection: "column",
+                height: 350,
+              }}
+            >
+              <div style={{ flex: 1, overflowY: "auto", padding: 10 }}>
+                {messages.map((msg, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      margin: "8px 0",
+                      padding: "8px 12px",
+                      borderRadius: 12,
+                      maxWidth: "80%",
+                      backgroundColor:
+                        msg.sender === "user" ? "#f97316" : "#e5e7eb",
+                      color: msg.sender === "user" ? "white" : "#111827",
+                      alignSelf:
+                        msg.sender === "user" ? "flex-end" : "flex-start",
+                    }}
+                  >
+                    {msg.text}
+                  </div>
+                ))}
+              </div>
+              <form
+                onSubmit={handleChatSubmit}
+                style={{ display: "flex", borderTop: "1px solid #d1d5db" }}
+              >
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Escribe tu mensaje..."
                   style={{
-                    margin: "8px 0",
-                    padding: "8px 12px",
-                    borderRadius: 12,
-                    maxWidth: "80%",
-                    backgroundColor:
-                      msg.sender === "user" ? "#f97316" : "#e5e7eb",
-                    color: msg.sender === "user" ? "white" : "#111827",
-                    alignSelf:
-                      msg.sender === "user" ? "flex-end" : "flex-start",
+                    flex: 1,
+                    border: "none",
+                    padding: 10,
+                    fontSize: "0.95rem",
+                    outline: "none",
+                  }}
+                />
+                <button
+                  type="submit"
+                  style={{
+                    backgroundColor: "#f97316",
+                    color: "white",
+                    border: "none",
+                    padding: "0 15px",
+                    cursor: "pointer",
+                    fontWeight: 700,
                   }}
                 >
-                  {msg.text}
-                </div>
-              ))}
+                  Enviar
+                </button>
+              </form>
             </div>
-            <form
-              onSubmit={handleChatSubmit}
-              style={{ display: "flex", borderTop: "1px solid #d1d5db" }}
-            >
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Escribe tu mensaje..."
-                style={{
-                  flex: 1,
-                  border: "none",
-                  padding: 10,
-                  fontSize: "0.95rem",
-                  outline: "none",
-                }}
-              />
-              <button
-                type="submit"
-                style={{
-                  backgroundColor: "#f97316",
-                  color: "white",
-                  border: "none",
-                  padding: "0 15px",
-                  cursor: "pointer",
-                  fontWeight: 700,
-                }}
-              >
-                Enviar
-              </button>
-            </form>
-          </div>
-        )}
-      </div>
-
-      <style jsx>{`
-        @keyframes pulseGlow {
-          0% {
-            box-shadow: 0 0 10px rgba(245, 158, 11, 0.45);
-          }
-          100% {
-            box-shadow: 0 0 24px rgba(245, 158, 11, 0.95);
-          }
-        }
-      `}</style>
+          )}
+        </div>
+      )}
     </div>
   );
 }
