@@ -103,8 +103,7 @@ export default function Home() {
         .filter((i) => i.qty > 0)
     );
 
-  const removeItem = (id) =>
-    setCart((prev) => prev.filter((i) => i.id !== id));
+  const removeItem = (id) => setCart((prev) => prev.filter((i) => i.id !== id));
 
   const subtotalCents = useMemo(
     () =>
@@ -122,7 +121,6 @@ export default function Home() {
       maximumFractionDigits: 2,
     }).format(cents / 100);
 
-  // --- Checkout ---
   const handleCheckout = async () => {
     if (!cart.length) {
       alert("Tu carrito está vacío 🛒");
@@ -153,19 +151,48 @@ export default function Home() {
     }
   };
 
+  // --- Schema for Google SEO ---
+  const schemaData = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "Mikuzka Salsas Artesanales",
+    description:
+      "Salsas mexicanas artesanales hechas con ingredientes frescos, especias auténticas y pasión por el sabor.",
+    image: "https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5-1.jpg",
+    address: { "@type": "PostalAddress", addressCountry: "MX" },
+    brand: "Mikuzka",
+    url: "https://mikuzka.com.mx",
+    sameAs: ["https://www.instagram.com/mikuzka", "https://facebook.com/mikuzka"],
+  };
+
   return (
-    <div
-      style={{
-        fontFamily: "'Inter', sans-serif",
-        backgroundColor: "#fff8f0",
-        color: "#1f2937",
-      }}
-    >
+    <div style={{ fontFamily: "'Inter', sans-serif", background: "#fff8f0" }}>
       <Head>
-        <title>Mikuzka | La salsa que más gusta 🌶️</title>
+        <title>Mikuzka | Salsas Artesanales Mexicanas 🌶️</title>
         <meta
           name="description"
-          content="Salsas artesanales con ingredientes frescos y auténticos sabores mexicanos."
+          content="Compra salsas mexicanas artesanales de Mikuzka. Hechas con ingredientes naturales, amor y un toque picante auténtico."
+        />
+        <meta
+          name="keywords"
+          content="salsa mexicana, salsas artesanales, chile habanero, aderezo cilantro, salsa picante, salsa gourmet, Mikuzka"
+        />
+        <meta name="author" content="Mikuzka Salsas Artesanales" />
+        <meta property="og:title" content="Mikuzka | Salsas Artesanales Mexicanas" />
+        <meta
+          property="og:description"
+          content="Descubre las salsas artesanales mexicanas más deliciosas — Chilli-Churri, Habanero, Cremo Haba y más."
+        />
+        <meta
+          property="og:image"
+          content="https://www.mikuzka.com.mx/wp-content/uploads/2025/07/5-1.jpg"
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://mikuzka.com.mx" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
         />
       </Head>
 
@@ -238,18 +265,18 @@ export default function Home() {
         <div
           style={{
             position: "relative",
-            maxWidth: 680,
+            maxWidth: 700,
             margin: "0 auto",
             backgroundColor: "rgba(0,0,0,0.45)",
             borderRadius: 18,
             padding: "36px 20px",
           }}
         >
-          <h2 style={{ fontSize: "2.6rem", fontWeight: 800, lineHeight: 1.2 }}>
-            El sabor que enciende tus sentidos 🌶️
+          <h2 style={{ fontSize: "2.6rem", fontWeight: 800 }}>
+            Salsas Artesanales Mexicanas
           </h2>
-          <p style={{ fontSize: "1.15rem", margin: "16px 0 22px" }}>
-            Ingredientes frescos y amor artesanal — directo a tu mesa.
+          <p style={{ fontSize: "1.1rem", margin: "16px 0 22px" }}>
+            Picante, fresca y llena de sabor — hechas a mano en México 🇲🇽
           </p>
           <a
             href="#productos"
@@ -260,7 +287,6 @@ export default function Home() {
               borderRadius: 10,
               textDecoration: "none",
               fontWeight: 700,
-              boxShadow: "0 4px 10px rgba(0,0,0,0.35)",
             }}
           >
             Ver productos
@@ -269,7 +295,7 @@ export default function Home() {
       </header>
 
       {/* PRODUCTS */}
-      <section
+      <main
         id="productos"
         style={{
           maxWidth: 1120,
@@ -277,17 +303,25 @@ export default function Home() {
           padding: "0 18px",
         }}
       >
-        <h3
+        <h2
           style={{
             textAlign: "center",
-            fontSize: "2.2rem",
             color: "#b91c1c",
-            marginBottom: 44,
+            fontSize: "2rem",
             fontWeight: 800,
           }}
         >
-          Nuestras Salsas Artesanales
-        </h3>
+          Nuestras Salsas
+        </h2>
+        <p
+          style={{
+            textAlign: "center",
+            color: "#6b7280",
+            marginBottom: 40,
+          }}
+        >
+          Descubre nuestras salsas únicas: Chilli-Churri, Cilantro, Cremo Haba y Habanero.
+        </p>
 
         <div
           style={{
@@ -297,7 +331,7 @@ export default function Home() {
           }}
         >
           {products.map((p) => (
-            <div
+            <article
               key={p.id}
               style={{
                 background: "white",
@@ -305,15 +339,13 @@ export default function Home() {
                 boxShadow: p.featured
                   ? "0 0 24px rgba(245,158,11,0.85)"
                   : "0 8px 18px rgba(0,0,0,0.12)",
-                border: p.featured ? "3px solid #f59e0b" : "1px solid #eee",
                 textAlign: "center",
-                overflow: "hidden",
-                transform: p.featured ? "scale(1.03)" : "none",
+                border: p.featured ? "3px solid #f59e0b" : "1px solid #eee",
               }}
             >
               <img
                 src={p.img}
-                alt={p.name}
+                alt={`${p.name} - ${p.desc}`}
                 style={{ width: "100%", height: 240, objectFit: "cover" }}
               />
               <div style={{ padding: 18 }}>
@@ -324,16 +356,15 @@ export default function Home() {
                       color: "white",
                       borderRadius: 999,
                       padding: "4px 12px",
-                      display: "inline-block",
-                      fontSize: "0.82rem",
                       fontWeight: 800,
+                      display: "inline-block",
                       marginBottom: 10,
                     }}
                   >
-                    ⭐ Top Seller
+                    ⭐ Recomendado
                   </div>
                 )}
-                <h4 style={{ color: "#b91c1c", fontWeight: 800 }}>{p.name}</h4>
+                <h3 style={{ color: "#b91c1c", fontWeight: 800 }}>{p.name}</h3>
                 <p style={{ color: "#374151", fontSize: "0.95rem" }}>{p.desc}</p>
                 <p style={{ color: "#065f46", fontWeight: 800 }}>
                   {formatMXN(p.priceCents)}
@@ -353,182 +384,30 @@ export default function Home() {
                   🛒 Agregar al carrito
                 </button>
               </div>
-            </div>
+            </article>
           ))}
         </div>
+      </main>
 
-        <p
-          style={{
-            textAlign: "center",
-            marginTop: 16,
-            fontSize: "0.92rem",
-            color: "#6b7280",
-          }}
-        >
-          * Envío calculado en el Checkout: México <b>$200 MXN</b>, Internacional{" "}
-          <b>$700 MXN</b>.
-        </p>
-      </section>
-
-      {/* CART OVERLAY */}
-      {cartOpen && (
-        <div
-          onClick={() => setCartOpen(false)}
-          style={{
-            position: "fixed",
-            inset: 0,
-            background: "rgba(0,0,0,0.35)",
-            zIndex: 40,
-          }}
-        />
-      )}
-
-      {/* CART SIDEBAR */}
-      <aside
+      {/* FOOTER */}
+      <footer
+        id="contacto"
         style={{
-          position: "fixed",
-          top: 0,
-          right: cartOpen ? 0 : "-400px",
-          width: "100%",
-          maxWidth: 380,
-          height: "100vh",
-          background: "white",
-          boxShadow: "0 0 24px rgba(0,0,0,0.25)",
-          zIndex: 50,
-          transition: "right 0.25s ease",
-          display: "flex",
-          flexDirection: "column",
+          background: "#111827",
+          color: "white",
+          textAlign: "center",
+          padding: "40px 20px",
+          marginTop: 60,
         }}
       >
-        <div
-          style={{
-            padding: "14px 16px",
-            borderBottom: "1px solid #eee",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            background:
-              "linear-gradient(90deg, rgba(249,115,22,0.06), rgba(185,28,28,0.06))",
-          }}
-        >
-          <strong>Tu carrito</strong>
-          <button
-            onClick={() => setCartOpen(false)}
-            style={{
-              border: "none",
-              background: "transparent",
-              fontSize: "1.2rem",
-              cursor: "pointer",
-            }}
-            aria-label="Cerrar carrito"
-          >
-            ✕
-          </button>
-        </div>
+        <h3>Contacto</h3>
+        <p>📞 462-291-2002 | 462-170-6308 | mikuzka.salsas@gmail.com</p>
+        <p style={{ color: "#9ca3af", fontSize: "0.85rem", marginTop: 10 }}>
+          © 2025 Mikuzka Salsas Artesanales — Hechas con amor en México 🇲🇽
+        </p>
+      </footer>
 
-        <div style={{ padding: 14, overflowY: "auto", flex: 1 }}>
-          {cart.length === 0 ? (
-            <p style={{ color: "#6b7280" }}>Tu carrito está vacío.</p>
-          ) : (
-            cart.map((it) => {
-              const p = catalog[it.id];
-              if (!p) return null;
-              return (
-                <div
-                  key={it.id}
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "64px 1fr auto",
-                    gap: 10,
-                    alignItems: "center",
-                    padding: "10px 0",
-                    borderBottom: "1px solid #f3f4f6",
-                  }}
-                >
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    style={{
-                      width: 64,
-                      height: 64,
-                      objectFit: "cover",
-                      borderRadius: 8,
-                    }}
-                  />
-                  <div>
-                    <div style={{ fontWeight: 700, marginBottom: 4 }}>
-                      {p.name}
-                    </div>
-                    <div style={{ color: "#065f46", fontWeight: 700 }}>
-                      {formatMXN(p.priceCents)}
-                    </div>
-                    <div style={{ marginTop: 6, display: "flex", gap: 8 }}>
-                      <button onClick={() => decQty(it.id)} style={qtyBtnStyle}>
-                        −
-                      </button>
-                      <span>{it.qty}</span>
-                      <button onClick={() => incQty(it.id)} style={qtyBtnStyle}>
-                        +
-                      </button>
-                      <button
-                        onClick={() => removeItem(it.id)}
-                        style={{
-                          ...qtyBtnStyle,
-                          background: "transparent",
-                          border: "1px solid #ef4444",
-                          color: "#ef4444",
-                        }}
-                      >
-                        Eliminar
-                      </button>
-                    </div>
-                  </div>
-                  <div style={{ fontWeight: 800 }}>
-                    {formatMXN(p.priceCents * it.qty)}
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
-
-        <div style={{ padding: 16, borderTop: "1px solid #eee" }}>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              marginBottom: 6,
-            }}
-          >
-            <span>Subtotal</span>
-            <strong>{formatMXN(subtotalCents)}</strong>
-          </div>
-          <div
-            style={{ fontSize: "0.9rem", color: "#6b7280", marginBottom: 12 }}
-          >
-            Envío calculado en el Checkout (MX: <b>$200 MXN</b>, Intl:{" "}
-            <b>$700 MXN</b>).
-          </div>
-          <button
-            disabled={!cart.length}
-            onClick={handleCheckout}
-            style={{
-              width: "100%",
-              background: "linear-gradient(90deg,#f59e0b,#f97316)",
-              color: "white",
-              border: "none",
-              padding: "12px 16px",
-              borderRadius: 10,
-              cursor: cart.length ? "pointer" : "not-allowed",
-              fontWeight: 800,
-            }}
-          >
-            Pagar con Stripe
-          </button>
-        </div>
-      </aside>
-
-      {/* CHAT WIDGET (hidden when cart is open) */}
+      {/* CHATBOT (hidden when cart open) */}
       {!cartOpen && (
         <div
           style={{
@@ -541,7 +420,6 @@ export default function Home() {
             overflow: "hidden",
             boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
             zIndex: 60,
-            transition: "bottom 0.3s ease",
             background: "white",
           }}
         >
