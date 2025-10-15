@@ -1,5 +1,6 @@
 import Stripe from "stripe";
 
+// Initialize Stripe with your platform secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export default async function handler(req, res) {
@@ -10,11 +11,11 @@ export default async function handler(req, res) {
   try {
     const { product } = req.body;
 
-    // Define your product list
+    // ✅ Define your product catalog here
     const products = {
       aderezo_cilantro_300ml: {
         name: "Aderezo Cilantro (300ml)",
-        price: 6000, // MXN (Stripe uses cents)
+        price: 6000, // Stripe uses cents (60.00 MXN)
       },
       salsa_chilli_churri_300ml: {
         name: "Salsa Chilli-Churri (300ml)",
@@ -31,9 +32,11 @@ export default async function handler(req, res) {
     };
 
     const selected = products[product];
-    if (!selected) return res.status(400).json({ error: "Invalid product" });
+    if (!selected) {
+      return res.status(400).json({ error: "Invalid product selected" });
+    }
 
-    // Create Checkout Session on behalf of connected account
+    // ✅ Create checkout session on behalf of the connected account
     const session = await stripe.checkout.sessions.create(
       {
         payment_method_types: ["card"],
@@ -56,20 +59,21 @@ export default async function handler(req, res) {
         success_url: `${req.headers.origin}/?success=true`,
         cancel_url: `${req.headers.origin}/?canceled=true`,
 
-        // Optional: take an application fee
+        // 💰 Optional: Take a small platform fee (e.g. 5 MXN)
         payment_intent_data: {
-          application_fee_amount: 500, // 5 MXN fee for example
+          application_fee_amount: 500, // Fee in cents (MXN)
         },
       },
       {
-        // 👇 this is the key part — charge through the connected account
+        // 🎯 This ensures payment goes to the connected account
         stripeAccount: process.env.STRIPE_CONNECTED_ACCOUNT_ID,
       }
     );
 
+    // Return the checkout URL to the frontend
     res.status(200).json({ url: session.url });
   } catch (error) {
-    console.error("Stripe Connect error:", error);
-    res.status(500).json({ error: "Failed to create checkout session" });
+    console.error("Stripe Connect Error:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 }
